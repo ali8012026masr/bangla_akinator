@@ -1,0 +1,42 @@
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: bangla_akinator_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.runCommand({ ping: 1 })"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./akinator_backend
+      dockerfile: Dockerfile
+    container_name: bangla_akinator_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+      - DB_NAME=bangla_akinator
+      - CORS_ORIGINS=["http://localhost:3000","http://localhost:8080","http://127.0.0.1:8000"]
+      - LOG_LEVEL=INFO
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\" || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  mongo_data:
+    driver: local
