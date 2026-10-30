@@ -104,6 +104,10 @@ async def test_invalid_and_out_of_order_answer(client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_contributions_pipeline(client: AsyncClient):
+    from app.core.database import get_database
+    db = get_database()
+    await db.contributions.delete_many({"normalized_name": "তাসকিন আহমেদ"})
+
     res_start = await client.post("/api/start-game")
     session_id = res_start.json()["session_id"]
 

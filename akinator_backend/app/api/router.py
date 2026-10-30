@@ -257,7 +257,7 @@ async def submit_guess_feedback(
 
     return GuessFeedbackResponse(
         status=engine.status,
-        message_bn=feedback_result["message_bn"],
+        message_bn=feedback_result.get("message_bn") or "অনুমানটি প্রক্রিয়া করা হয়েছে।",
         next_question=resp_q,
         guess=None
     )

@@ -112,6 +112,17 @@ async def validate_database_data() -> bool:
         if falses == 0 and published_count > 1:
             warnings.append(f"Question '{q_code}' is never False across all {published_count} characters.")
 
+    # 5. Pairwise Uniqueness Check (Every published character must have a unique trait vector)
+    published_chars = [c for c in characters if c.get("status") == "published"]
+    for i in range(len(published_chars)):
+        for j in range(i + 1, len(published_chars)):
+            c1 = published_chars[i]
+            c2 = published_chars[j]
+            p1 = {k: v.get("value") for k, v in c1.get("answer_profile", {}).items() if k in active_q_codes}
+            p2 = {k: v.get("value") for k, v in c2.get("answer_profile", {}).items() if k in active_q_codes}
+            if p1 == p2:
+                errors.append(f"Collision: Characters '{c1.get('name_bn')}' and '{c2.get('name_bn')}' have identical trait profiles!")
+
     # Report results
     logger.info("=== Seed Data Validation Report ===")
     logger.info(f"Verified {len(questions)} questions ({len(active_q_codes)} active).")
@@ -132,10 +143,14 @@ async def validate_database_data() -> bool:
     return True
 
 
-if __name__ == "__main__":
+async def main():
     try:
-        success = asyncio.run(validate_database_data())
+        success = await validate_database_data()
         if not success:
             sys.exit(1)
     finally:
-        asyncio.run(close_database_connection())
+        await close_database_connection()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

@@ -206,6 +206,7 @@ class GameSessionEngine:
         self.current_question_code = next_q["question_code"]
         return {
             "status": GameStatus.ASKING,
+            "message_bn": "অনুমানটি সঠিক ছিল না। জ্বিন আবার চিন্তা করে প্রশ্ন করছে...",
             "next_question": {
                 "question_code": next_q["question_code"],
                 "text_bn": next_q["text_bn"],
@@ -261,6 +262,7 @@ class GameSessionEngine:
         self.current_question_code = next_q["question_code"]
         return {
             "status": GameStatus.ASKING,
+            "message_bn": "অনুমানটি সঠিক ছিল না। জ্বিন আবার চিন্তা করে প্রশ্ন করছে...",
             "next_question": {
                 "question_code": next_q["question_code"],
                 "text_bn": next_q["text_bn"],
