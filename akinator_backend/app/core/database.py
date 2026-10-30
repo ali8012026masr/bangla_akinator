@@ -1,5 +1,6 @@
 """Async MongoDB connection and index management using official PyMongo Async API."""
 
+import asyncio
 from typing import Optional, Any
 from pymongo import AsyncMongoClient
 import pymongo
@@ -10,9 +11,15 @@ _client: Optional[AsyncMongoClient] = None
 
 
 def get_mongo_client() -> AsyncMongoClient:
-    """Return or create the global AsyncMongoClient."""
+    """Return or create an AsyncMongoClient bound to the current running event loop."""
     global _client
-    if _client is None:
+    try:
+        current_loop = asyncio.get_running_loop()
+    except RuntimeError:
+        current_loop = None
+
+    # Reconnect if client doesn't exist or was created on a different event loop (e.g. across test fixtures)
+    if _client is None or (current_loop and getattr(_client, "_loop", None) != current_loop):
         _client = AsyncMongoClient(settings.MONGO_URI, serverSelectionTimeoutMS=5000)
     return _client
 
