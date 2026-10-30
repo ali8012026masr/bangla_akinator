@@ -33,28 +33,28 @@ class FeedbackEnum(str, Enum):
 
 
 # Categorical Likelihood Model: P(user_answer | character_fact)
-# character_fact: True (verified true), False (verified false), None (missing/unknown fact)
+# Each condition (True, False, None) sums strictly to 1.0 across all 5 user answers.
 LIKELIHOOD_TABLE: Dict[tuple, float] = {
-    # If character attribute is TRUE
-    (True, AnswerEnum.YES): 0.90,
-    (True, AnswerEnum.PROBABLY_YES): 0.70,
-    (True, AnswerEnum.UNKNOWN): 0.30,
-    (True, AnswerEnum.PROBABLY_NO): 0.10,
-    (True, AnswerEnum.NO): 0.05,
+    # If character attribute is TRUE (sum = 1.00)
+    (True, AnswerEnum.YES): 0.65,
+    (True, AnswerEnum.PROBABLY_YES): 0.20,
+    (True, AnswerEnum.UNKNOWN): 0.08,
+    (True, AnswerEnum.PROBABLY_NO): 0.05,
+    (True, AnswerEnum.NO): 0.02,
 
-    # If character attribute is FALSE
-    (False, AnswerEnum.YES): 0.05,
-    (False, AnswerEnum.PROBABLY_YES): 0.10,
-    (False, AnswerEnum.UNKNOWN): 0.30,
-    (False, AnswerEnum.PROBABLY_NO): 0.70,
-    (False, AnswerEnum.NO): 0.90,
+    # If character attribute is FALSE (sum = 1.00)
+    (False, AnswerEnum.YES): 0.02,
+    (False, AnswerEnum.PROBABLY_YES): 0.05,
+    (False, AnswerEnum.UNKNOWN): 0.08,
+    (False, AnswerEnum.PROBABLY_NO): 0.20,
+    (False, AnswerEnum.NO): 0.65,
 
-    # If character attribute is UNKNOWN/NEUTRAL (uninformative)
-    (None, AnswerEnum.YES): 0.20,
-    (None, AnswerEnum.PROBABLY_YES): 0.20,
+    # If character attribute is UNKNOWN/NEUTRAL (sum = 1.00)
+    (None, AnswerEnum.YES): 0.15,
+    (None, AnswerEnum.PROBABLY_YES): 0.15,
     (None, AnswerEnum.UNKNOWN): 0.40,
-    (None, AnswerEnum.PROBABLY_NO): 0.20,
-    (None, AnswerEnum.NO): 0.20,
+    (None, AnswerEnum.PROBABLY_NO): 0.15,
+    (None, AnswerEnum.NO): 0.15,
 }
 
 
